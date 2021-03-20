@@ -1,4 +1,4 @@
-package simulations
+package scala.simulations
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
