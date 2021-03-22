@@ -2,12 +2,13 @@ package scala.simulations
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
+
 import scala.concurrent.duration._
 
-class GetStocksReactiveScenario extends Simulation {
+class GetStocksScenario extends Simulation {
 
   // 1 Http Conf
-  val httpConf = http.baseUrl("http://localhost:8080/stocks/reactive")
+  val httpConf = http.baseUrl("http://localhost:8081/stocks")
     .header("Accept", "application/json")
 
   // 2 Scenarios Definition
@@ -16,14 +17,14 @@ class GetStocksReactiveScenario extends Simulation {
       http("Get all stocks")
         .get("/search")
         .check(status.is(200))
-        .check(jsonPath("$[0].ticket").saveAs("ticket"))
+        .check(jsonPath("$.content[0].ticket").saveAs("ticket"))
     ).exec { session => println(session); session }
   }
 
   def getSpecificStock() = {
     exec(
       http("Get Specific Stock")
-        .get("/search/mono/${ticket}")
+        .get("/search/${ticket}")
         .check(status.is(200))
     )
   }
