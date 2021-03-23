@@ -4,18 +4,20 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import scala.concurrent.duration._
 
-class GetStocksYahooLoadScenario extends Simulation {
 
+class GetStockByTickerStatusInvestScenario extends Simulation {
+
+  // 1 Http Conf
   val httpConf = http.baseUrl("http://localhost:8081/stocks")
     .header("Accept", "application/json")
 
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
 
   def getSpecificStockTicker() = {
-    repeat(10) {
+    repeat(200) {
       feed(csvFeeder)
-        .exec(http("Get Yahoo stock: ${ticker}")
-          .get("/yahoo/${ticker}")
+        .exec(http("Get Status Invest stock: ${ticker}")
+          .get("/statusInvest/${ticker}")
           .check(status.is(200)))
     }
   }
@@ -25,7 +27,7 @@ class GetStocksYahooLoadScenario extends Simulation {
       exec(getSpecificStockTicker())
     }
 
-  // ** Fixed duration Load Simulation **
+  // 3 Load Scenario
   setUp(
     scn.inject(
       nothingFor(5 seconds),
@@ -36,6 +38,5 @@ class GetStocksYahooLoadScenario extends Simulation {
       global.responseTime.max.lt(100),
       global.successfulRequests.percent.gt(95)
     )
-
 
 }

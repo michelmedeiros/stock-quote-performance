@@ -42,7 +42,11 @@ class RuntimeParametersYahooReactive extends Simulation {
     }
 
   setUp(
-    scn.inject(atOnceUsers(1))
+    scn.inject(
+      nothingFor(5 seconds),
+      rampUsers(userCount) during (rampDuration second)
+    )
   ).protocols(httpConf)
+    .maxDuration(testDuration seconds)
 
 }

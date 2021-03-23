@@ -12,10 +12,12 @@ class GetStocksYahooReactiveLoadScenario extends Simulation {
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
 
   def getSpecificStockTicker() = {
-    feed(csvFeeder)
-      .exec(http("Get Yahoo stock: ${ticker}")
-        .get("/yahoo/${ticker}")
-        .check(status.is(200)))
+    repeat(10) {
+      feed(csvFeeder)
+        .exec(http("Get Yahoo stock: ${ticker}")
+          .get("/yahoo/${ticker}")
+          .check(status.is(200)))
+    }
   }
 
   val scn = scenario("Fixed Duration Load Simulation")
@@ -27,10 +29,9 @@ class GetStocksYahooReactiveLoadScenario extends Simulation {
   setUp(
     scn.inject(
       nothingFor(5 seconds),
-      atOnceUsers(1),
-      rampUsers(10) during (1 minute)
+      atOnceUsers(1)
     ).protocols(httpConf)
-  ).maxDuration(2 minute)
+  ).maxDuration(5 minute)
     .assertions(
       global.responseTime.max.lt(100),
       global.successfulRequests.percent.gt(95)

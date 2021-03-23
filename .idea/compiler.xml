@@ -6,11 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="stock-quote-performance" />
+        <module name="stock-quote-perfomance" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="stock-quote-performance" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
