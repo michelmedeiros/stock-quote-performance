@@ -13,9 +13,8 @@ class RuntimeParametersYahooReactive extends Simulation {
       .getOrElse(defaultValue)
   }
 
-
-  def userCount: Int = getProperty("USERS", "3000").toInt
-  def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
+  def userCount: Int = getProperty("USERS", "50").toInt
+  def rampDuration: Int = getProperty("RAMP_DURATION", "10").toInt
   def testDuration: Int = getProperty("DURATION", "1").toInt
 
   before {
@@ -29,17 +28,17 @@ class RuntimeParametersYahooReactive extends Simulation {
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
 
   def getSpecificStockTicker() = {
-    repeat(10) {
-      feed(csvFeeder)
-        .exec(http("Get Yahoo stock: ${ticker}")
-          .get("/quotes/${ticker}")
-          .check(status.is(200)))
-        .pause(500 milliseconds)
-    }
+    feed(csvFeeder)
+      .exec(http("Get Yahoo stock: ${ticker}")
+        .get("/quotes/${ticker}")
+        .check(status.is(200)))
+      .pause(1)
   }
 
-  val scn = scenario("Get Yahoo stock")
-      .exec(getSpecificStockTicker())
+  val scn = scenario("Get all video games")
+    .forever() {
+      exec(getSpecificStockTicker())
+    }
 
   setUp(
     scn.inject(
