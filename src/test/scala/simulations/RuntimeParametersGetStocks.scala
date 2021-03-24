@@ -5,7 +5,7 @@ import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersYahoo extends Simulation {
+class RuntimeParametersGetStocks extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -14,7 +14,7 @@ class RuntimeParametersYahoo extends Simulation {
   }
 
 
-  def userConstantCount: Int = getProperty("USERS", "50").toInt
+  def userConstantCount: Int = getProperty("USERS", "400").toInt
 
   def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "30").toInt
 
@@ -33,7 +33,7 @@ class RuntimeParametersYahoo extends Simulation {
   def getSpecificStockTicker() = {
     feed(csvFeeder)
       .exec(http("Get Yahoo stock: ${ticker}")
-        .get("/yahoo/${ticker}")
+        .get("/search/${ticker}")
         .check(status.is(200)))
       .pause(1 second, 2 second)
   }

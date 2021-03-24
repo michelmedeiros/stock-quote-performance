@@ -14,13 +14,15 @@ class RuntimeParametersYahooReactive extends Simulation {
   }
 
 
-  def userCount: Int = getProperty("USERS", "50").toInt
-  def rampDuration: Int = getProperty("RAMP_DURATION", "150").toInt
-  def testDuration: Int = getProperty("DURATION", "300").toInt
+  def userConstantCount: Int = getProperty("USERS", "50").toInt
+
+  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "60").toInt
+
+  def testDuration: Int = getProperty("DURATION", "5").toInt
 
   before {
-    println(s"Running test with ${userCount} users")
-    println(s"Ramping users over ${rampDuration} seconds")
+    println(s"Running test with ${userConstantCount} fixed users")
+    println(s"Ramping users over ${constantRamp} seconds")
     println(s"Total test duration: ${testDuration} seconds")
   }
 
@@ -33,20 +35,18 @@ class RuntimeParametersYahooReactive extends Simulation {
       .exec(http("Get Yahoo stock: ${ticker}")
         .get("/yahoo/${ticker}")
         .check(status.is(200)))
-      .pause(1)
+      .pause(1 minute)
   }
 
   val scn = scenario("Get Yahoo stock")
-    .forever() {
-      exec(getSpecificStockTicker())
-    }
+    .exec(getSpecificStockTicker())
 
   setUp(
     scn.inject(
-      nothingFor(5 seconds),
-      rampUsers(userCount) during (rampDuration second)
+      nothingFor(30 seconds),
+      constantUsersPerSec(userConstantCount) during (constantRamp seconds)
     )
   ).protocols(httpConf)
-    .maxDuration(testDuration seconds)
-
+    .maxDuration(testDuration minutes)
 }
+

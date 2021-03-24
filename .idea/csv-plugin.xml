@@ -10,7 +10,28 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\src\test\scala\examples\RuntimeParameters.scala">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\src\test\scala\simulations\CsvFeeder.scala">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\src\test\scala\simulations\RuntimeParametersYahoo.scala">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\src\test\scala\simulations\RuntimeParametersYahooReactive.scala">
           <value>
             <Attribute>
               <option name="separator" value=":" />
