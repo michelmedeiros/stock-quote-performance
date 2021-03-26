@@ -1,11 +1,11 @@
-package scala.simulations.reactive.local
+package scala.simulations.reactive.remote
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersLocalYahooReactiveWebclient extends Simulation {
+class RuntimeParametersRemoteYahooReactiveWebclient extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))

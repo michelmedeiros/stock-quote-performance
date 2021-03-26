@@ -1,7 +1,8 @@
-package scala.simulations
+package scala.simulations.nonreactive
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
+
 import scala.concurrent.duration._
 
 

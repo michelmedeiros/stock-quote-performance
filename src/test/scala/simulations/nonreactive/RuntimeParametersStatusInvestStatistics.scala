@@ -1,11 +1,11 @@
-package scala.simulations.reactive
+package scala.simulations.nonreactive
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersStatusInvestStatisticsReactive extends Simulation {
+class RuntimeParametersStatusInvestStatistics extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -13,7 +13,7 @@ class RuntimeParametersStatusInvestStatisticsReactive extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "5000").toInt
+  def userCount: Int = getProperty("USERS", "3000").toInt
   def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
   def testDuration: Int = getProperty("DURATION", "120").toInt
   def userConstantCount: Int = getProperty("USERS", "1").toInt
@@ -26,14 +26,14 @@ class RuntimeParametersStatusInvestStatisticsReactive extends Simulation {
     println(s"Total test duration: ${testDuration} seconds")
   }
 
-  val httpConf = http.baseUrl("http://localhost:8080/stocks/statusInvest")
+  val httpConf = http.baseUrl("http://localhost:8081/statistics")
     .header("Accept", "application/json")
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
 
   def getSpecificStockTicker() = {
     feed(csvFeeder)
       .exec(http("Get Status Invest stock: ${ticker}")
-        .get("/statistics/${ticker}")
+        .get("/statusInvest/${ticker}")
         .check(status.is(200)))
       .pause(1)
   }

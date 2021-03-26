@@ -5,7 +5,7 @@ import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersStatusInvestStatisticsMVC extends Simulation {
+class RuntimeParametersLocalStatusInvestStatisticsMVC extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))

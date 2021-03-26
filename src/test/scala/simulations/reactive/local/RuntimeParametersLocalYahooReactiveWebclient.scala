@@ -5,7 +5,7 @@ import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersLocalYahooReactiveMVC extends Simulation {
+class RuntimeParametersLocalYahooReactiveWebclient extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -13,7 +13,7 @@ class RuntimeParametersLocalYahooReactiveMVC extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "10").toInt
+  def userCount: Int = getProperty("USERS", "2000").toInt
   def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
   def testDuration: Int = getProperty("DURATION", "120").toInt
   def userConstantCount: Int = getProperty("USERS", "1").toInt
@@ -26,30 +26,21 @@ class RuntimeParametersLocalYahooReactiveMVC extends Simulation {
     println(s"Total test duration: ${testDuration} seconds")
   }
 
-  val httpConf = http.baseUrl("http://localhost:8080/stocks")
+  val httpConf = http.baseUrl("http://localhost:8080/client")
     .header("Accept", "application/json")
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
-
-  def getSpecificStockTickerSpringMVC() = {
-    feed(csvFeeder)
-      .exec(http("Get Yahoo stock MVC: ${ticker}")
-        .get("/search/${ticker}")
-        .check(status.is(200)))
-      .pause(1 second)
-  }
 
   def getSpecificStockTickerWebClient() = {
     feed(csvFeeder)
       .exec(http("Get Yahoo stock Webclient: ${ticker}")
-        .get("/reactive/search/{ticket}")
+        .get("/search/{ticker}")
         .check(status.is(200)))
       .pause(1 second)
   }
 
-
   val scn = scenario("Get Yahoo stock")
     .forever() {
-      exec(getSpecificStockTickerSpringMVC())
+      exec(getSpecificStockTickerWebClient())
     }
 
   setUp(

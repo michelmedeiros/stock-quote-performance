@@ -9,5 +9,8 @@
         <module name="stock-quote-perfomance" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="stock-quote-perfomance" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

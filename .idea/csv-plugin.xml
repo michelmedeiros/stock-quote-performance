@@ -3,21 +3,28 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="\src\test\resources\data\yahooCsvFile.csv">
+        <entry key="\src\test\scala\Engine.scala">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\src\test\scala\examples\RuntimeParameters.scala">
+        <entry key="\src\test\scala\simulations\GetStockByTickerStatusInvestReactiveScenario.scala">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\src\test\scala\simulations\RuntimeParametersGetStocksReactive.scala">
           <value>
             <Attribute>
               <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>
-        <entry key="\src\test\scala\simulations\CsvFeeder.scala">
+        <entry key="\src\test\scala\simulations\RuntimeParametersStatusInvestStatisticsReactive.scala">
           <value>
             <Attribute>
               <option name="separator" value=":" />
@@ -31,7 +38,14 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\src\test\scala\simulations\RuntimeParametersYahooReactive.scala">
+        <entry key="\src\test\scala\simulations\reactive\local\RuntimeParametersLocalYahooReactiveWebclient.scala">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\src\test\scala\simulations\reactive\local\RuntimeParametersLocalYahooScenarios.scala">
           <value>
             <Attribute>
               <option name="separator" value=":" />

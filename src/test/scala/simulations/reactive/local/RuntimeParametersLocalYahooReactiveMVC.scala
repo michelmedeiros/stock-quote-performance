@@ -5,7 +5,7 @@ import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersLocalYahooReactiveScenarios extends Simulation {
+class RuntimeParametersLocalYahooReactiveMVC extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -38,20 +38,9 @@ class RuntimeParametersLocalYahooReactiveScenarios extends Simulation {
       .pause(1 second)
   }
 
-  def getSpecificStockTickerWebClient() = {
-    feed(csvFeeder)
-      .exec(http("Get Yahoo stock Webclient: ${ticker}")
-        .get("/reactive/search/{ticket}")
-        .check(status.is(200)))
-      .pause(1 second)
-  }
-
-
   val scn = scenario("Get Yahoo stock")
     .forever() {
       exec(getSpecificStockTickerSpringMVC())
-        .pause(30)
-        .exec(getSpecificStockTickerWebClient())
     }
 
   setUp(
