@@ -1,11 +1,11 @@
-package scala.simulations.reactive
+package scala.simulations.reactive.remote
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersGetStocksReactive extends Simulation {
+class RuntimeParametersRemoteStatusInvestWebClient extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -13,29 +13,27 @@ class RuntimeParametersGetStocksReactive extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "5").toInt
+  def userCount: Int = getProperty("USERS", "10").toInt
   def rampDuration: Int = getProperty("RAMP_DURATION", "10").toInt
-  def testDuration: Int = getProperty("DURATION", "60").toInt
+  def testDuration: Int = getProperty("DURATION3", "60").toInt
 
   before {
     println(s"Running test with ${userCount} fixed users")
-    println(s"Ramping users over ${rampDuration} seconds")
-    println(s"Total test duration: ${testDuration} seconds")
   }
 
-  val httpConf = http.baseUrl("http://localhost:8080/reactive")
+  val httpConf = http.baseUrl("http://localhost:8080/client")
     .header("Accept", "application/json")
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
 
   def getSpecificStockTicker() = {
     feed(csvFeeder)
-      .exec(http("Get Yahoo stock: ${ticker}")
-        .get("/quotes/${ticker}")
+      .exec(http("Get Status Invest stock: ${ticker}")
+        .get("/stocks/generate/${ticker}")
         .check(status.is(200)))
-      .pause(1)
+      .pause(1 second)
   }
 
-  val scn = scenario("Get Yahoo stock")
+  val scn = scenario("Generate stock")
     .forever() {
       exec(getSpecificStockTicker())
     }
@@ -46,6 +44,7 @@ class RuntimeParametersGetStocksReactive extends Simulation {
       rampUsers(userCount) during (rampDuration seconds)
     )
   ).protocols(httpConf)
-    .maxDuration(testDuration minutes)
+    .maxDuration(testDuration seconds)
 
 }
+
