@@ -1,11 +1,11 @@
-package scala.simulations.reactive.local
+package scala.simulations.reactive.remote
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersLocalYahooReactiveMVC extends Simulation {
+class RuntimeParametersRemoteYahooWebclient extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -13,11 +13,11 @@ class RuntimeParametersLocalYahooReactiveMVC extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "10").toInt
-  def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
+  def userCount: Int = getProperty("USERS", "100").toInt
+  def rampDuration: Int = getProperty("RAMP_DURATION", "10").toInt
   def testDuration: Int = getProperty("DURATION", "120").toInt
   def userConstantCount: Int = getProperty("USERS", "1").toInt
-  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "10").toInt
+  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "5").toInt
 
 
   before {
@@ -26,21 +26,21 @@ class RuntimeParametersLocalYahooReactiveMVC extends Simulation {
     println(s"Total test duration: ${testDuration} seconds")
   }
 
-  val httpConf = http.baseUrl("http://localhost:8080/stocks")
+  val httpConf = http.baseUrl("http://localhost:8080/client")
     .header("Accept", "application/json")
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
 
-  def getSpecificStockTickerSpringMVC() = {
+  def getSpecificStockTickerWebClient() = {
     feed(csvFeeder)
-      .exec(http("Get Yahoo stock MVC: ${ticker}")
-        .get("/search/${ticker}")
+      .exec(http("Get Yahoo stock Webclient: ${ticker}")
+        .get("/yahoo/generate/{ticker}")
         .check(status.is(200)))
-      .pause(1 second)
+      .pause(1 second, 2 second)
   }
 
   val scn = scenario("Get Yahoo stock")
     .forever() {
-      exec(getSpecificStockTickerSpringMVC())
+      exec(getSpecificStockTickerWebClient())
     }
 
   setUp(
@@ -51,6 +51,10 @@ class RuntimeParametersLocalYahooReactiveMVC extends Simulation {
     )
   ).protocols(httpConf)
     .maxDuration(testDuration seconds)
+    .assertions(
+      global.responseTime.max.lt(100),
+      global.successfulRequests.percent.gt(95)
+    )
 
 }
 

@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 class GetStocksReactiveScenario extends Simulation {
 
   // 1 Http Conf
-  val httpConf = http.baseUrl("http://localhost:8080/stocks/reactive")
+  val httpConf = http.baseUrl("http://localhost:8080/yahoo")
     .header("Accept", "application/json")
 
   // 2 Scenarios Definition

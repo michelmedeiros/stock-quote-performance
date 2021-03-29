@@ -45,6 +45,9 @@ class RuntimeParametersRemoteStatusInvestMVC extends Simulation {
     )
   ).protocols(httpConf)
     .maxDuration(testDuration seconds)
-
+    .assertions(
+      global.responseTime.max.lt(100),
+      global.successfulRequests.percent.gt(95)
+    )
 }
 

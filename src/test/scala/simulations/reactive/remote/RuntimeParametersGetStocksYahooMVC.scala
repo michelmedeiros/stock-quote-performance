@@ -5,7 +5,7 @@ import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersRemoteYahooReactiveWebclient extends Simulation {
+class RuntimeParametersGetStocksYahooMVC extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -13,11 +13,11 @@ class RuntimeParametersRemoteYahooReactiveWebclient extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "2000").toInt
+  def userCount: Int = getProperty("USERS", "1").toInt
   def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
   def testDuration: Int = getProperty("DURATION", "120").toInt
   def userConstantCount: Int = getProperty("USERS", "1").toInt
-  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "10").toInt
+  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "30").toInt
 
 
   before {
@@ -26,21 +26,21 @@ class RuntimeParametersRemoteYahooReactiveWebclient extends Simulation {
     println(s"Total test duration: ${testDuration} seconds")
   }
 
-  val httpConf = http.baseUrl("http://localhost:8080/client")
+  val httpConf = http.baseUrl("http://localhost:8080/yahoo")
     .header("Accept", "application/json")
+
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
 
-  def getSpecificStockTickerWebClient() = {
+  def getSpecificStockTicker() = {
     feed(csvFeeder)
-      .exec(http("Get Yahoo stock Webclient: ${ticker}")
-        .get("/search/{ticker}")
+      .exec(http("Get Yahoo stock: ${ticker}")
+        .get("/search/${ticker}")
         .check(status.is(200)))
-      .pause(1 second)
   }
 
   val scn = scenario("Get Yahoo stock")
     .forever() {
-      exec(getSpecificStockTickerWebClient())
+      exec(getSpecificStockTicker())
     }
 
   setUp(
@@ -51,6 +51,9 @@ class RuntimeParametersRemoteYahooReactiveWebclient extends Simulation {
     )
   ).protocols(httpConf)
     .maxDuration(testDuration seconds)
+    .assertions(
+      global.responseTime.max.lt(100),
+      global.successfulRequests.percent.gt(95)
+    )
 
 }
-

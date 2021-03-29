@@ -1,11 +1,11 @@
-package scala.simulations.reactive.remote
+package scala.simulations.reactive.local
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersRemoteStatusInvestWebClient extends Simulation {
+class RuntimeParametersLocalYahooMVC extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -13,31 +13,34 @@ class RuntimeParametersRemoteStatusInvestWebClient extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "500").toInt
-  def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
+  def userCount: Int = getProperty("USERS", "50").toInt
+  def rampDuration: Int = getProperty("RAMP_DURATION", "10").toInt
   def testDuration: Int = getProperty("DURATION", "120").toInt
   def userConstantCount: Int = getProperty("USERS", "1").toInt
-  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "10").toInt
+  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "5").toInt
+
 
   before {
     println(s"Running test with ${userCount} fixed users")
+    println(s"Ramping users over ${rampDuration} seconds")
+    println(s"Total test duration: ${testDuration} seconds")
   }
 
-  val httpConf = http.baseUrl("http://localhost:8080/client")
+  val httpConf = http.baseUrl("http://localhost:8081/stocks")
     .header("Accept", "application/json")
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
 
-  def getSpecificStockTicker() = {
+  def getSpecificStockTickerSpringMVC() = {
     feed(csvFeeder)
-      .exec(http("Get Status Invest stock: ${ticker}")
-        .get("/stocks/generate/${ticker}")
+      .exec(http("Get Yahoo stock MVC: ${ticker}")
+        .get("/yahoo/generate/${ticker}")
         .check(status.is(200)))
-      .pause(1 second)
+      .pause(1 second, 2 second)
   }
 
-  val scn = scenario("Generate stock")
+  val scn = scenario("Get Yahoo stock")
     .forever() {
-      exec(getSpecificStockTicker())
+      exec(getSpecificStockTickerSpringMVC())
     }
 
   setUp(
