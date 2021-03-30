@@ -13,11 +13,11 @@ class RuntimeParametersLocalYahooMVC extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "50").toInt
-  def rampDuration: Int = getProperty("RAMP_DURATION", "10").toInt
+  def userCount: Int = getProperty("USERS", "5000").toInt
+  def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
   def testDuration: Int = getProperty("DURATION", "120").toInt
   def userConstantCount: Int = getProperty("USERS", "1").toInt
-  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "5").toInt
+  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "30").toInt
 
 
   before {

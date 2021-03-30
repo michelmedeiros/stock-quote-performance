@@ -5,7 +5,7 @@ import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersGetStocksYahooMVC extends Simulation {
+class RuntimeParametersRemoteJsonPlaceHolderWebclient extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -13,7 +13,7 @@ class RuntimeParametersGetStocksYahooMVC extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "5000").toInt
+  def userCount: Int = getProperty("USERS", "100").toInt
   def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
   def testDuration: Int = getProperty("DURATION", "120").toInt
   def userConstantCount: Int = getProperty("USERS", "1").toInt
@@ -26,23 +26,19 @@ class RuntimeParametersGetStocksYahooMVC extends Simulation {
     println(s"Total test duration: ${testDuration} seconds")
   }
 
-  val httpConf = http.baseUrl("http://localhost:8080/yahoo")
+  val httpConf = http.baseUrl("http://localhost:8080/jsonplaceholder")
     .header("Accept", "application/json")
 
-  val csvFeeder = csv("data/yahooCsvFile.csv").circular
-
-  def getSpecificStockTicker() = {
-    feed(csvFeeder)
-      .exec(http("Get Status Yahoo: ${ticker}")
-        .get("/search/${ticker}")
+  def getUsers() = {
+      exec(http("Get Users")
+        .get("/users")
         .check(status.is(200)))
       .pause(1 second, 2 second)
   }
 
-
-  val scn = scenario("Get Yahoo stock")
+  val scn = scenario("Get JsonParser")
     .forever() {
-      exec(getSpecificStockTicker())
+      exec(getUsers())
     }
 
   setUp(
@@ -59,3 +55,4 @@ class RuntimeParametersGetStocksYahooMVC extends Simulation {
     )
 
 }
+

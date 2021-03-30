@@ -1,11 +1,11 @@
-package scala.simulations.reactive.remote
+package scala.simulations.reactive.local
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersGetStocksYahooMVC extends Simulation {
+class RuntimeParametersLocalStatusInvestStocksMVC extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -13,7 +13,7 @@ class RuntimeParametersGetStocksYahooMVC extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "5000").toInt
+  def userCount: Int = getProperty("USERS", "500").toInt
   def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
   def testDuration: Int = getProperty("DURATION", "120").toInt
   def userConstantCount: Int = getProperty("USERS", "1").toInt
@@ -22,25 +22,22 @@ class RuntimeParametersGetStocksYahooMVC extends Simulation {
 
   before {
     println(s"Running test with ${userCount} fixed users")
-    println(s"Ramping users over ${rampDuration} seconds")
-    println(s"Total test duration: ${testDuration} seconds")
   }
 
-  val httpConf = http.baseUrl("http://localhost:8080/yahoo")
+  val httpConf = http.baseUrl("http://localhost:8081/stocks")
     .header("Accept", "application/json")
 
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
 
   def getSpecificStockTicker() = {
     feed(csvFeeder)
-      .exec(http("Get Status Yahoo: ${ticker}")
-        .get("/search/${ticker}")
+      .exec(http("Get Status Invest stock: ${ticker}")
+        .get("/statusInvest/${ticker}")
         .check(status.is(200)))
-      .pause(1 second, 2 second)
+      .pause(1 second)
   }
 
-
-  val scn = scenario("Get Yahoo stock")
+  val scn = scenario("Generate stock")
     .forever() {
       exec(getSpecificStockTicker())
     }
@@ -57,5 +54,5 @@ class RuntimeParametersGetStocksYahooMVC extends Simulation {
       global.responseTime.max.lt(100),
       global.successfulRequests.percent.gt(95)
     )
-
 }
+

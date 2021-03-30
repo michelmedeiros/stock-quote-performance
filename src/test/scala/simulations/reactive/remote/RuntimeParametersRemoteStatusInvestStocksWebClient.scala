@@ -5,7 +5,7 @@ import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class RuntimeParametersRemoteStatusInvestWebClient extends Simulation {
+class RuntimeParametersRemoteStatusInvestStocksWebClient extends Simulation {
 
   private def getProperty(propertyName: String, defaultValue: String) = {
     Option(System.getenv(propertyName))
@@ -13,18 +13,20 @@ class RuntimeParametersRemoteStatusInvestWebClient extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "500").toInt
+  def userCount: Int = getProperty("USERS", "10").toInt
   def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
   def testDuration: Int = getProperty("DURATION", "120").toInt
   def userConstantCount: Int = getProperty("USERS", "1").toInt
-  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "10").toInt
+  def constantRamp: Int = getProperty("CONSTANT_RAMP_DURATION", "30").toInt
+
 
   before {
     println(s"Running test with ${userCount} fixed users")
   }
 
-  val httpConf = http.baseUrl("http://localhost:8080/client")
+  val httpConf = http.baseUrl("http://localhost:8080/statusInvest")
     .header("Accept", "application/json")
+
   val csvFeeder = csv("data/yahooCsvFile.csv").circular
 
   def getSpecificStockTicker() = {
