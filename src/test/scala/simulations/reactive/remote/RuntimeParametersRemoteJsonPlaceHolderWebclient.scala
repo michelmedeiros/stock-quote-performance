@@ -13,7 +13,7 @@ class RuntimeParametersRemoteJsonPlaceHolderWebclient extends Simulation {
       .getOrElse(defaultValue)
   }
 
-  def userCount: Int = getProperty("USERS", "100").toInt
+  def userCount: Int = getProperty("USERS", "10").toInt
   def rampDuration: Int = getProperty("RAMP_DURATION", "30").toInt
   def testDuration: Int = getProperty("DURATION", "120").toInt
   def userConstantCount: Int = getProperty("USERS", "1").toInt
@@ -31,9 +31,9 @@ class RuntimeParametersRemoteJsonPlaceHolderWebclient extends Simulation {
 
   def getUsers() = {
       exec(http("Get Users")
-        .get("/users")
+        .get("/generate/users")
         .check(status.is(200)))
-      .pause(1 second, 2 second)
+      .pause(1)
   }
 
   val scn = scenario("Get JsonParser")
